@@ -1,5 +1,7 @@
 import pygame
 
+WINDOW_DIMENSIONS = None
+
 class Texture():
     def __init__(self,image):
         if type(image)==str:
@@ -11,7 +13,7 @@ class Texture():
 
 class Color(Texture):
     def __init__(self,rgb):
-        surf = pygame.Surface((100,100))
+        surf = pygame.Surface(projection((0.1,0.1)))
         surf.fill(rgb)
         super().__init__(surf)
 
@@ -37,5 +39,16 @@ class Button():
     def render(self,window):
         self.textures[self.currentTexture].render(window,self.pos,self.size)
 
-def projection(pos,dimensions):
-    return [int(dimensions[i]*pos[i] for i in range(2))]
+def setWindowDim(newVal):
+    global WINDOW_DIMENSIONS
+    WINDOW_DIMENSIONS = newVal
+
+def getWindowDim():
+    return WINDOW_DIMENSIONS
+
+def projection(pos,dimensions=WINDOW_DIMENSIONS):
+    global WINDOW_DIMENSIONS
+    if dimensions is None:
+        dimensions = WINDOW_DIMENSIONS
+    print([int(dimensions[i]*pos[i]) for i in range(2)])
+    return [int(dimensions[i]*pos[i]) for i in range(2)]
