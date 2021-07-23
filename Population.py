@@ -43,8 +43,3 @@ def update():
     CurrentPopulation = round(CurrentPopulation * NaturalGrowthRate)
 
     return CurrentPopulation
-
-
-while True:
-    print(update())
-
