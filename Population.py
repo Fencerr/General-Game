@@ -11,6 +11,8 @@ FoodChangeRate = 1
 PercentCO2 = 0
 CO2ChangePerYear = 0
 
+KilledThisYear = 0
+
 def getCurrentPopulation():
     return CurrentPopulation
 
@@ -24,16 +26,25 @@ def addCO2Emitter(PercentPerYear):
     CO2ChangePerYear += PercentPerYear
 
 
+def kill(Amount):
+    global KilledThisYear
+    KilledThisYear += Amount
+
 def update():
     global CurrentPopulation
     global CurrentAnnualFoodSupply
     global PercentCO2
+    global KilledThisYear
+
+    # Killed From this year
+    CurrentPopulation -= KilledThisYear
+    KilledThisYear = 0
 
     # CO2 Levels
     PercentCO2 += CO2ChangePerYear
 
     # Food supply change
-    CurrentAnnualFoodSupply = CurrentAnnualFoodSupply * numpy.clip((FoodChangeRate - PercentCO2), 0, 1)
+    CurrentAnnualFoodSupply *= numpy.clip((FoodChangeRate - PercentCO2), 0, 1)
 
     # Food Supply Effect Population
     NumberCanLive = CurrentAnnualFoodSupply / FoodPerAnimal
