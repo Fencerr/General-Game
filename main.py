@@ -2,28 +2,31 @@ import Population, cv2
 from gameobjects import *
 from math import *
 from numpy import clip
+## we import all the necessary plugins
 
 
+##we set up the display and UI
 pygame.display.init()
 pygame.font.init()
 pygame.mixer.init()
-
+##we import our end video cutscene and the sad music
+##we also import our cyberpunk music
 vid = cv2.VideoCapture("FINALelpahnt poacher.mp4")
 finalMusic = pygame.mixer.Sound("elpahnt poacher.mp3")
 mechanicalSounds = pygame.mixer.Sound("2021-07-24 17-03-43.mp3")
-
+##custom font
 gameFont = pygame.font.Font("Fonts/CUTE_ANIMAL.ttf",40)
 menuFont = pygame.font.Font("Fonts/CUTE_ANIMAL.ttf",20)
-
+##we have pygame get the screen size and set the window to that size
 displayInfo = pygame.display.Info()
 setWindowDim((int(displayInfo.current_w / 1), int(displayInfo.current_h / 1)))
 window = pygame.display.set_mode(getWindowDim(), pygame.FULLSCREEN|pygame.RESIZABLE|pygame.DOUBLEBUF|pygame.HWACCEL)
 pygame.display.set_caption("Poached")
-
+##prices to improve your poaching operation
 poacherPrice = 100
 radarPrice = 50
 upgradePrice = 10
-
+##display prices for improvements
 menuOptions = ["More Poachers\n"+str(poacherPrice)+" Ivory", "Elephant Radar\n"+str(radarPrice)+" Ivory", "Gun Improvements\n"+str(upgradePrice)+" Ivory"][::-1]
 menuImgs = [Texture("morehunters.png"),Texture("radar_elephant.png"),Texture("moreguns.png")][::-1]
 running = True
@@ -36,10 +39,10 @@ timer = pygame.time.Clock()
 tick = 0
 gunUpgrade = 1
 tusks = [Texture("Tusk 1.png"),Texture("Tust2.png")]
-
+##find the n root of a value, this is for the rate of population decline
 def nthroot(n,root):
     return n**(1/root)
-
+##when we add more poachers we pollute the environment and increase the price of more poachers
 def addPoachers():
     global timeFrame, ivoryPerSec,ivory, poacherPrice,pollutants
     print("add poachers")
@@ -50,6 +53,7 @@ def addPoachers():
         ivoryPerSec += 10
     else:
         ivory+=poacherPrice
+##when we buy more radar tokens we kill more elephants and increase ivory rate
 def elephantRadar():
     global timeFrame, ivoryMul, ivory, radarPrice,pollutants
     print("radar")
@@ -64,6 +68,7 @@ def increaseCount():
     global ivory, gunUpgrade
     ivory += 1 * gunUpgrade
     Population.kill(gunUpgrade)
+##improve the kill rate when we manually click on elephant
 def upgradeGun():
     print("upgrade")
     global gunUpgrade, ivory, upgradePrice
@@ -72,7 +77,7 @@ def upgradeGun():
         gunUpgrade+=3
     else:
         ivory+=upgradePrice
-
+##sets up button and crosshair
 mainClickButton = Button((0.1, 0.5 - 0.15), (0.3, 0.3),
                          Texture("ALIVE_elephant.png"),
                          Texture("ALIVE_elephant.png"),
