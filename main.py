@@ -16,8 +16,9 @@ gameFont = pygame.font.Font("Fonts/CUTE_ANIMAL.ttf",40)
 menuFont = pygame.font.Font("Fonts/CUTE_ANIMAL.ttf",20)
 
 displayInfo = pygame.display.Info()
-setWindowDim((int(displayInfo.current_w / 2), int(displayInfo.current_h / 2)))
-window = pygame.display.set_mode(getWindowDim(), pygame.RESIZABLE|pygame.DOUBLEBUF|pygame.HWACCEL)
+setWindowDim((int(displayInfo.current_w / 1), int(displayInfo.current_h / 1)))
+window = pygame.display.set_mode(getWindowDim(), pygame.FULLSCREEN|pygame.RESIZABLE|pygame.DOUBLEBUF|pygame.HWACCEL)
+pygame.display.set_caption("Poached")
 
 poacherPrice = 100
 radarPrice = 50
@@ -138,7 +139,7 @@ while running:
         radarPrice = int(50*nthroot((ivoryPerSec*ivoryMul)/10+1,1.5))
         upgradePrice = int(10*nthroot((ivoryPerSec*ivoryMul)/10+1,1.5))"""
         menu.setOptions(menuOptions)
-        window = pygame.display.set_mode(getWindowDim(), pygame.RESIZABLE|pygame.DOUBLEBUF|pygame.HWACCEL)
+        window = pygame.display.set_mode(getWindowDim(), pygame.FULLSCREEN|pygame.RESIZABLE|pygame.DOUBLEBUF|pygame.HWACCEL)
         bgImg = clip(int(floor(len(pollutants) / (1200/7)) + 1), 1, 7)
         if bgImg!=lastBackground:
             background.setImage("forest_" + str(bgImg) + ".png")
