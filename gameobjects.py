@@ -5,15 +5,17 @@ WINDOW_DIMENSIONS = None
 class Texture():
     def __init__(self,image):
         if type(image)==str:
-            self.image = pygame.image.load(image)
+            self.image = pygame.image.load("Sprites/"+image)
         elif type(image)==pygame.Surface:
             self.image = image
+    def setImage(self,image):
+        self.image = pygame.image.load("Sprites/" + image)
     def render(self,surface,pos,size):
         surface.blit(pygame.transform.scale(self.image,size),pos)
 
 class Color(Texture):
     def __init__(self,rgb):
-        surf = pygame.Surface(projection((0.1,0.1)))
+        surf = pygame.Surface(projection((1,1)))
         surf.fill(rgb)
         super().__init__(surf)
 
@@ -22,10 +24,14 @@ class Button():
         self.textures = [texture,hoverTexture,clickTexture]
         self.action = action
         self.actionArgs = args
-        self.size = size
         self.currentTexture = 0
-        self.pos = pos
+        self.projPos = pos
+        self.projSize = size
+        self.pos = projection(self.projPos)
+        self.size = projection(self.projSize)
     def update(self,events):
+        self.pos = projection(self.projPos)
+        self.size = projection(self.projSize)
         if pygame.Rect(*self.pos,*self.size).collidepoint(*pygame.mouse.get_pos()):
             self.currentTexture = 1
         else:
@@ -39,6 +45,14 @@ class Button():
     def render(self,window):
         self.textures[self.currentTexture].render(window,self.pos,self.size)
 
+class Menu():
+    def __init__(self,pos,size,texture,options=[]):
+        self.pos = pos
+        self.size = size
+        self.texture = texture
+        self.options = options
+    #def update(self):
+
 def setWindowDim(newVal):
     global WINDOW_DIMENSIONS
     WINDOW_DIMENSIONS = newVal
@@ -50,5 +64,4 @@ def projection(pos,dimensions=WINDOW_DIMENSIONS):
     global WINDOW_DIMENSIONS
     if dimensions is None:
         dimensions = WINDOW_DIMENSIONS
-    print([int(dimensions[i]*pos[i]) for i in range(2)])
     return [int(dimensions[i]*pos[i]) for i in range(2)]
