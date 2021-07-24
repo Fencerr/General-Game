@@ -64,9 +64,3 @@ def update():
     return max(CurrentPopulation, 0)
 
 
-i = 0
-for i in range(1, 100):
-    i += 1
-    addCO2Emitter(.5)
-    kill(i*100)
-    print(update())
