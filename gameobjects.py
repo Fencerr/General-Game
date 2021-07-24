@@ -1,7 +1,9 @@
 import pygame
 from numpy import clip
+# These are the import statements, both pygame and numpy are used.
 
 WINDOW_DIMENSIONS = None
+# Window size for the game.
 
 class Texture():
     def __init__(self,image):
@@ -17,13 +19,15 @@ class Texture():
         surface.blit(rotationSurf,pos)
     def get_size(self):
         return self.image.get_size()
-
+    
+# The color class below is for 
 class Color(Texture):
     def __init__(self,rgb):
         surf = pygame.Surface(projection((1,1)))
         surf.fill(rgb)
         super().__init__(surf)
 
+# The class below is the blueprint for all the buttons used, as seen in the UI of the game, for things such as the "Gun Improvements" and the "More Poachers" button. 
 class Button():
     def __init__(self,pos,size,texture,hoverTexture,clickTexture,action,*args):
         self.textures = [texture,hoverTexture,clickTexture]
@@ -63,6 +67,7 @@ class Button():
         self.dead = [dead for dead in self.dead if self.currentTime - dead<500]
         self.textures[self.currentTexture].render(window,self.pos,self.size)
 
+# The class below is the blueprint for the menu of the game, basically structuring the interface for the elephant image, etc. etc. 
 class Menu():
     def __init__(self,pos,size,texture,images = [],options=[],actions = [], args = []):
         self.pos = pos
@@ -87,18 +92,19 @@ class Menu():
         for i in range(len(self.options)):
             if len(self.images)>=i+1:
                 self.images[i].render(surface,(self.rects[i].x+projection((0.1,0))[0]-projection((0.06,0.1))[0],self.rects[i].y),projection((0.05,0.05*WINDOW_DIMENSIONS[0]/WINDOW_DIMENSIONS[1])))
-                #surface.blit(self.images[i],(self.rects[i].x-projection((0.01,0))[0],self.rects[i].y))
             for ind,line in enumerate(self.options[i].split("\n")):
                 surface.blit(font.render(line,True,(255,255,255)),(self.rects[i].x+projection((0.1,0))[0],self.rects[i].y+projection((0.02*ind,0))[0]))
 
 
-
+# The method below sets the dimensions for the game window to the inputted parameter newVal. 
 def setWindowDim(newVal):
     global WINDOW_DIMENSIONS
     WINDOW_DIMENSIONS = newVal
 
+# The method below returns the dimensions of the game window. 
 def getWindowDim():
     return WINDOW_DIMENSIONS
+
 
 def projection(pos,dimensions=WINDOW_DIMENSIONS):
     global WINDOW_DIMENSIONS
