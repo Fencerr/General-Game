@@ -1,4 +1,5 @@
 import pygame
+from numpy import clip
 
 WINDOW_DIMENSIONS = None
 
@@ -10,8 +11,10 @@ class Texture():
             self.image = image
     def setImage(self,image):
         self.image = pygame.image.load("Sprites/" + image)
-    def render(self,surface,pos,size):
-        surface.blit(pygame.transform.scale(self.image,size),pos)
+    def render(self,surface,pos,size, rotation = 0,alpha=255):
+        rotationSurf = pygame.transform.rotate(pygame.transform.scale(self.image,size),rotation)
+        rotationSurf.set_alpha(alpha)
+        surface.blit(rotationSurf,pos)
     def get_size(self):
         return self.image.get_size()
 
@@ -31,7 +34,13 @@ class Button():
         self.projSize = size
         self.pos = projection(self.projPos)
         self.size = projection(self.projSize)
+        self.clickAnimation = False
+        self.dead = []
+        self.internalClock = pygame.time.Clock()
+        self.currentTime = 0
+        self.lastClickTime = 0
     def update(self,events):
+        self.currentTime += self.internalClock.tick()
         self.pos = projection(self.projPos)
         self.size = projection(self.projSize)
         if pygame.Rect(*self.pos,*self.size).collidepoint(*pygame.mouse.get_pos()):
@@ -44,7 +53,14 @@ class Button():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1 and self.currentTexture == 2:
                     self.action(*self.actionArgs)
+                    self.dead.append(self.currentTime)
+        if self.currentTexture == 2:
+            self.currentTexture = 1
     def render(self,window):
+        for dead in self.dead:
+            offset = 1-((1-(clip(self.currentTime - dead,0,500)/500))**2)
+            self.textures[2].render(window,[self.pos[i]+offset*projection((0.1,0.1))[0] for i in range(2)],self.size,rotation = offset*-45,alpha=255-offset*255)
+        self.dead = [dead for dead in self.dead if self.currentTime - dead<500]
         self.textures[self.currentTexture].render(window,self.pos,self.size)
 
 class Menu():
@@ -61,12 +77,9 @@ class Menu():
         self.rects = []
         for i in range(len(self.options)):
             self.rects.append(pygame.Rect(*projection((self.pos[0],self.pos[1]+(1/len(self.options))*i+0.2)),*projection((0.25,0.1))))
-        for event in events:
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    for index,rect in enumerate(self.rects):
-                        if rect.collidepoint(*pygame.mouse.get_pos()):
-                            self.actions[index](*self.args[index])
+        for index,rect in enumerate(self.rects):
+            if pygame.mouse.get_pressed()[0] and rect.collidepoint(*pygame.mouse.get_pos()):
+                self.actions[index](*self.args[index])
     def setOptions(self,newOptions):
         self.options = newOptions
     def draw(self,font: pygame.font.Font,surface: pygame.Surface):

@@ -8,15 +8,16 @@ pygame.display.init()
 pygame.font.init()
 pygame.mixer.init()
 
-vid = cv2.VideoCapture("elpahnt poacherFINAL.mp4")
+vid = cv2.VideoCapture("FINALelpahnt poacher.mp4")
 finalMusic = pygame.mixer.Sound("elpahnt poacher.mp3")
+mechanicalSounds = pygame.mixer.Sound("2021-07-24 17-03-43.mp3")
 
 gameFont = pygame.font.Font("Fonts/CUTE_ANIMAL.ttf",40)
 menuFont = pygame.font.Font("Fonts/CUTE_ANIMAL.ttf",20)
 
 displayInfo = pygame.display.Info()
 setWindowDim((int(displayInfo.current_w / 2), int(displayInfo.current_h / 2)))
-window = pygame.display.set_mode(getWindowDim(), pygame.RESIZABLE)
+window = pygame.display.set_mode(getWindowDim(), pygame.RESIZABLE|pygame.DOUBLEBUF|pygame.HWACCEL)
 
 poacherPrice = 100
 radarPrice = 50
@@ -33,30 +34,29 @@ ivoryMul = 1
 timer = pygame.time.Clock()
 tick = 0
 gunUpgrade = 1
+tusks = [Texture("Tusk 1.png"),Texture("Tust2.png")]
 
 def nthroot(n,root):
     return n**(1/root)
 
 def addPoachers():
-    global timeFrame, ivoryPerSec,ivory, poacherPrice
+    global timeFrame, ivoryPerSec,ivory, poacherPrice,pollutants
     print("add poachers")
     ivory-=poacherPrice
     if ivory>=0:
         Population.addCO2Emitter(0.0000001 * timeFrame)
         pollutants.append(1)
         ivoryPerSec += 10
-        poacherPrice *= 1.1
     else:
         ivory+=poacherPrice
 def elephantRadar():
-    global timeFrame, ivoryMul, ivory, radarPrice
+    global timeFrame, ivoryMul, ivory, radarPrice,pollutants
     print("radar")
     ivory-=radarPrice
     if ivory>=0:
         Population.addCO2Emitter(0.000001 * timeFrame)
         pollutants.append(1)
         ivoryMul += 5
-        radarPrice *= 1.1
     else:
         ivory+=radarPrice
 def increaseCount():
@@ -69,7 +69,6 @@ def upgradeGun():
     ivory-=upgradePrice
     if ivory>=0:
         gunUpgrade+=3
-        upgradePrice*=1.1
     else:
         ivory+=upgradePrice
 
@@ -84,10 +83,12 @@ menu = Menu((0.75,0),(0.25,1),automationSelection,images = menuImgs,options = me
             args = [[],[],[]])
 crosshair = Texture("Crosshair.png")
 extinct = False
-extinctTransition = True
+extinctTransition = False
 fadeOut = pygame.Surface(getWindowDim())
 fadeOut.fill((0,0,0))
 transition = 0
+mechanicalSounds.play(loops=-1)
+lastBackground = clip(int(floor(len(pollutants) / 50) + 1), 1, 7)
 while running:
     allEvents = pygame.event.get()
     fadeOut = pygame.Surface(getWindowDim())
@@ -109,6 +110,7 @@ while running:
             mainClickButton.update([])
             if clip(int((transition/5000)*255),0,255)==255:
                 extinct = True
+                mechanicalSounds.stop()
                 finalMusic.play()
         mainClickButton.render(window)
         window.blit(gameFont.render("Ivory: " + str(round(ivory,2)), True, (255, 255, 255)), projection((0.5, 0.5)))
@@ -136,11 +138,15 @@ while running:
         radarPrice = int(50*nthroot((ivoryPerSec*ivoryMul)/10+1,1.5))
         upgradePrice = int(10*nthroot((ivoryPerSec*ivoryMul)/10+1,1.5))"""
         menu.setOptions(menuOptions)
-        window = pygame.display.set_mode(getWindowDim(), pygame.RESIZABLE)
-        background.setImage("forest_" + str(clip(int(floor(len(pollutants) / 10) + 1), 1, 7)) + ".png")
+        window = pygame.display.set_mode(getWindowDim(), pygame.RESIZABLE|pygame.DOUBLEBUF|pygame.HWACCEL)
+        bgImg = clip(int(floor(len(pollutants) / (1200/7)) + 1), 1, 7)
+        if bgImg!=lastBackground:
+            background.setImage("forest_" + str(bgImg) + ".png")
         background.render(window, projection((0, 0)), projection((1, 1)))
+        poacherPrice = 100 * (nthroot(ivoryPerSec*ivoryMul,1.5)+10)/10
+        radarPrice = 50 * (nthroot(ivoryPerSec * ivoryMul,1.5) + 10)/10
+        upgradePrice = 10 * (nthroot(ivoryPerSec * ivoryMul,1.5) +10)/10
     elif extinct == True:
-        pygame.event.set_grab(True)
         ret,frame = vid.read()
         if ret == True:
             frame = cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
@@ -158,3 +164,4 @@ while running:
                 running = False
         elif event.type == pygame.VIDEORESIZE:
             setWindowDim((event.w, event.h))
+    lastBackground = clip(int(floor(len(pollutants) / 50) + 1), 1, 7)
