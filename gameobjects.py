@@ -67,7 +67,7 @@ class Button():
         self.dead = [dead for dead in self.dead if self.currentTime - dead<500]
         self.textures[self.currentTexture].render(window,self.pos,self.size)
 
-# The class below is the blueprint for the menu of the game, basically structuring the interface for the elephant image, etc. etc. 
+# The class below is the blueprint for the menu of the game, basically structuring the interface for the elephant image, etc.
 class Menu():
     def __init__(self,pos,size,texture,images = [],options=[],actions = [], args = []):
         self.pos = pos
@@ -105,7 +105,7 @@ def setWindowDim(newVal):
 def getWindowDim():
     return WINDOW_DIMENSIONS
 
-
+# takes coordinates of window and turns that to pixel coordinates
 def projection(pos,dimensions=WINDOW_DIMENSIONS):
     global WINDOW_DIMENSIONS
     if dimensions is None:
