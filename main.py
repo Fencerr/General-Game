@@ -135,9 +135,6 @@ while running:
         window.blit(fadeOut,(0,0))
         pygame.display.update()
         menuOptions = ["More Poachers\n"+str(round(poacherPrice,2))+" Ivory", "Elephant Radar\n"+str(round(radarPrice,2))+" Ivory", "Gun Improvements\n"+str(round(upgradePrice,2))+" Ivory"][::-1]
-        """poacherPrice = int(100*nthroot((ivoryPerSec*ivoryMul)/10+1,1.5))
-        radarPrice = int(50*nthroot((ivoryPerSec*ivoryMul)/10+1,1.5))
-        upgradePrice = int(10*nthroot((ivoryPerSec*ivoryMul)/10+1,1.5))"""
         menu.setOptions(menuOptions)
         window = pygame.display.set_mode(getWindowDim(), pygame.FULLSCREEN|pygame.RESIZABLE|pygame.DOUBLEBUF|pygame.HWACCEL)
         bgImg = clip(int(floor(len(pollutants) / (1200/7)) + 1), 1, 7)
